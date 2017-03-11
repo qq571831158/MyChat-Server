@@ -1,6 +1,9 @@
 package com.ch.controller;
-
+import com.ch.DAO.FriendDAO;
+import com.ch.DAO.UserDAO;
 import com.ch.bean.ReceiveMessageBean;
+import com.ch.utils.DBConnection;
+import com.ch.utils.GetTime;
 import net.sf.json.JSONObject;
 
 import javax.websocket.*;
@@ -8,6 +11,10 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.*;
+import com.ch.model.Message;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 /**
  * Created by apple on 2017/2/7.
  */
@@ -35,7 +42,6 @@ public class WebSocketTest {
         webSocketTestMap.put(username,this);     //加入set中
         addOnlineCount();           //在线数加1
        // System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
-
     }
     /**
      * 连接关闭调用的方法
@@ -58,20 +64,9 @@ public class WebSocketTest {
         System.out.println("来自客户端的消息:" + message);
         JSONObject jsonObject=JSONObject.fromObject(message);
         ReceiveMessageBean messageBean=(ReceiveMessageBean)JSONObject.toBean(jsonObject, ReceiveMessageBean.class);
-        sendToUser(messageBean.getToUser(),messageBean.getMessage());
-        //群发消息
-//        for(WebSocketTest item: webSocketTestMap){
-//            try {
-//                if(item.username.equals("cheng")) {
-//
-//                    item.sendMessage(message);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                continue;
-//            }
-//        }
-
+        System.out.println(messageBean.getMessage());
+        System.out.println(messageBean);
+        sendToUser(messageBean);
     }
     /**
      * 发生错误时调用
@@ -85,22 +80,39 @@ public class WebSocketTest {
     }
     /**
      * 发送给个人
-     * @param username 用户名
-     * @param message 消息内容
+     * @param messageBean 接受消息bean
      */
-    public static void sendToUser(String username,String message){
-       WebSocketTest web = (WebSocketTest)webSocketTestMap.get(username);
-        try {
-            web.session.getBasicRemote().sendText(message);
-        }catch (IOException e){
-            webSocketTestMap.remove(web);
+    public void sendToUser(ReceiveMessageBean messageBean){
+        Message message = new Message();
+        message.setMessageContent(messageBean.getMessage());
+        message.setMessageFromuser(messageBean.getFromUser());
+        message.setMessageTouser(messageBean.getToUser());
+        message.setMessageTime(GetTime.getTimeStamp());
+        if (webSocketTestMap.get(messageBean.getToUser())==null) {
+            message.setMessageIsread(0);
+        }
+        else {
+            message.setMessageIsread(1);
+            WebSocketTest web = (WebSocketTest)webSocketTestMap.get(messageBean.getToUser());
             try {
-                web.session.close();
-            }catch (IOException ex){
-
+                web.session.getBasicRemote().sendText(messageBean.getMessage());
+            }catch (IOException e){
+                e.printStackTrace();
+                webSocketTestMap.remove(web);
+                try {
+                    web.session.close();
+                }catch (IOException ex){
+                    ex.printStackTrace();
+                }
             }
-//            String message = String.format("* %s %s",
-//                    web.username, "has been disconnected.");
+        }
+
+        try {
+            String sql = "insert into Message values(?,?,?,?,?,?)";
+            DBConnection dbConnection = new DBConnection();
+            dbConnection.executeUpdate(sql,message);
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
 
     }
@@ -110,6 +122,20 @@ public class WebSocketTest {
      * @throws IOException
      */
 
+    public void sendToAll(String message){
+//        //群发消息
+//        for(WebSocketTest item: webSocketTestMap){
+//            try {
+//                if(item.username.equals("cheng")) {
+//
+//                    item.sendMessage(message);
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                continue;
+//            }
+//        }
+    }
     public void sendMessage(String message) throws IOException {
         this.session.getBasicRemote().sendText(message);
         //this.session.getAsyncRemote().sendText(message);

@@ -4,6 +4,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -16,7 +17,10 @@ public class Message {
     private String messageTouser;
     private String messageContent;
     private Timestamp messageTime;
+    private Integer messageIsread;
+
     public Message(){}
+
     @Id
     @Column(name = "sid")
     public int getSid() {
@@ -94,5 +98,15 @@ public class Message {
         result = 31 * result + (messageContent != null ? messageContent.hashCode() : 0);
         result = 31 * result + (messageTime != null ? messageTime.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "message_isread")
+    public Integer getMessageIsread() {
+        return messageIsread;
+    }
+
+    public void setMessageIsread(Integer messageIsread) {
+        this.messageIsread = messageIsread;
     }
 }
