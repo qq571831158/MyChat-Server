@@ -20,8 +20,8 @@
         var password = $("#password").val();
         $.ajax({
             type: "POST",
-//            url: "http://182.254.152.99:8080/MyChat1/user/login",
-            url: "http://localhost:8080/user/login",
+            url: "http://182.254.152.99:8080/MyChat1/user/login",
+//            url: "http://localhost:8080/user/login",
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify({
@@ -30,8 +30,8 @@
             }),
             success: function (data) {
                 alert(data.message);
-//                window.location.href = "http://182.254.152.99:8080/MyChat1/chat.jsp?username=" + username;
-                 window.location.href = "http://localhost:8080/chat.jsp?username=" + username;
+                window.location.href = "http://182.254.152.99:8080/MyChat1/chat.jsp?username=" + username;
+//                 window.location.href = "http://localhost:8080/chat.jsp?username=" + username;
             }
         });
     }

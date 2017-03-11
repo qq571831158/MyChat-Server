@@ -7,11 +7,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.sql.PreparedStatement;
 import java.util.List;
 
 /**
@@ -46,15 +44,16 @@ public class MessageDAO {
     public Message findById(Serializable id) {
         return (Message) this.getSession().get(Message.class, id);
     }
-    public List<Message> findByHQL(String hql, Object... params) {
+    public List<Message> findByHQL(String hql, String params) {
         Query query = this.getSession().createQuery(hql);
-        for (int i = 0; params != null && i < params.length; i++) {
-            query.setParameter(i, params);
-        }
+        query.setParameter(0, params);
         return query.list();
     }
 
-    public void savaEntity(Message message){
-        String sql = "insert into Message values(?,?,?,?,?)";
+    public void updataStatus(String username){
+        Query query = this.getSession().createQuery("update Message set messageIsread = 1 where messageTouser = ?");
+        query.setParameter(0,username);
+        int a=query.executeUpdate();
+        System.out.println("一共修改了"+ a +"条数据");
     }
 }

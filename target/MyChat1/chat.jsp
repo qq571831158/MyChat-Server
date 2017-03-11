@@ -35,18 +35,18 @@
     }
     var websocket = null;
     if ('WebSocket' in window) {
-//        websocket = new WebSocket("ws://182.254.152.99:8080/MyChat1/websocket/"+username);
-        websocket = new WebSocket("ws://localhost:8080/websocket/"+username);
+        websocket = new WebSocket("ws://182.254.152.99:8080/MyChat1/websocket/"+username);
+//        websocket = new WebSocket("ws://localhost:8080/websocket/"+username);
         window.websocket = websocket;
 
     }
     else if ('MozWebSocket' in window) {
-//        websocket = new MozWebSocket("ws://182.254.152.99:8080/MyChat1/websocket");
-        websocket = new MozWebSocket("ws://localhost:8080/MyChat1/websocket");
+        websocket = new MozWebSocket("ws://182.254.152.99:8080/MyChat1/websocket");
+//        websocket = new MozWebSocket("ws://localhost:8080/MyChat1/websocket");
     }
     else {
-        websocket = new SockJS("http://182.254.152.99:8080/MyChat1/sockjs/websocket");
-//        websocket = new MozWebSocket("ws://localhost:8080/MyChat1/websocket");
+//        websocket = new SockJS("http://182.254.152.99:8080/MyChat1/sockjs/websocket");
+        websocket = new MozWebSocket("ws://localhost:8080/MyChat1/websocket");
     }
     websocket.onerror = function () {
         // setMessageInnerHTML("WebSocket连接发生错误");
