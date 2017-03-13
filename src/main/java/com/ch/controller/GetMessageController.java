@@ -1,6 +1,7 @@
 package com.ch.controller;
 
 import com.ch.DAO.MessageDAO;
+import com.ch.bean.IBeanOperation;
 import com.ch.bean.Message.GetMessageIBean;
 import com.ch.bean.OBeanBase;
 import com.ch.model.Message;
@@ -25,9 +26,9 @@ public class GetMessageController {
     public OBeanBase GetMessage(@RequestBody GetMessageIBean iBean) {
         OBeanBase carrier = new OBeanBase();
         if (userpool.checkUser(iBean)) {
-            String hql ="FROM Message WHERE messageTouser = ? and messageIsread = 0 ORDER BY messageTime";
+            String hql ="FROM Message WHERE messageTouser = ? and messageFromuser = ? and messageIsread = 0 ORDER BY messageTime";
             try {
-                List<Message> messages = dao.findByHQL(hql,iBean.getUsername());
+                List<Message> messages = dao.findByHQL(hql,iBean);
                 if(messages.size()==0){
                     carrier.setInfo("S02","暂无未读消息");
                 }
@@ -52,7 +53,7 @@ public class GetMessageController {
         OBeanBase carrier = new OBeanBase();
         if (userpool.checkUser(iBean)) {
             try {
-                dao.updataStatus(iBean.getUsername());
+                dao.updataStatus(iBean);
                 carrier.setInfo("S01","操作成功");
             }
             catch (Exception e){

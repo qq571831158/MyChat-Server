@@ -31,13 +31,26 @@ public class WebSocketTest {
     private String username;
     public WebSocketTest(){
     }
+
+    private  String valueGetKey(Map map,WebSocketTest value) {
+        Set set = map.entrySet();//新建一个不可重复的集合
+        Iterator it = set.iterator();//遍历的类
+        while(it.hasNext()) {
+            Map.Entry entry = (Map.Entry)it.next();//找到所有key-value对集合
+            if(entry.getValue().equals(value)) {//通过判断是否有该value值
+                return entry.getKey().toString();//取得key值
+            }
+        }
+        return "";
+    }
     /**
      * 连接建立成功调用的方法
      * @param session  可选的参数。session为与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
+
     @OnOpen
     public void onOpen(@PathParam("username") String username, Session session){
-        //System.out.println(username);
+        this.username = username;
         this.session = session;
         webSocketTestMap.put(username,this);     //加入set中
         addOnlineCount();           //在线数加1
@@ -48,8 +61,9 @@ public class WebSocketTest {
      */
     @OnClose
     public void onClose(){
-        System.out.println("客户端以及关闭");
-        webSocketTestMap.remove(this);  //从set中删除
+        String a = valueGetKey(webSocketTestMap,this);
+//        System.out.println("客户端以及关闭"+username);
+        webSocketTestMap.remove(a);  //从set中删除
        // subOnlineCount();           //在线数减1
        // System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
     }

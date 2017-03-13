@@ -1,5 +1,6 @@
 package com.ch.DAO;
 
+import com.ch.bean.Message.GetMessageIBean;
 import com.ch.model.Message;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -44,15 +45,17 @@ public class MessageDAO {
     public Message findById(Serializable id) {
         return (Message) this.getSession().get(Message.class, id);
     }
-    public List<Message> findByHQL(String hql, String params) {
+    public List<Message> findByHQL(String hql, GetMessageIBean params) {
         Query query = this.getSession().createQuery(hql);
-        query.setParameter(0, params);
+        query.setParameter(0, params.getUsername());
+        query.setParameter(1,params.getFromUser());
         return query.list();
     }
 
-    public void updataStatus(String username){
-        Query query = this.getSession().createQuery("update Message set messageIsread = 1 where messageTouser = ?");
-        query.setParameter(0,username);
+    public void updataStatus(GetMessageIBean iBean){
+        Query query = this.getSession().createQuery("update Message set messageIsread = 1 where messageTouser = ? and messageFromuser = ? and messageIsread= 0");
+        query.setParameter(0,iBean.getUsername());
+        query.setParameter(1,iBean.getFromUser());
         int a=query.executeUpdate();
         System.out.println("一共修改了"+ a +"条数据");
     }
