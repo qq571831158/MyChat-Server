@@ -1,13 +1,12 @@
 package com.ch.utils;
 
-import com.ch.DAO.MessageDAO;
+
 import com.ch.bean.FriendInfoOBean;
 import com.ch.bean.Message.GetMessageOBean;
-import com.ch.bean.UserloginOBean;
+
 import com.ch.model.Message;
 import com.ch.model.Userinfo;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.List;
 

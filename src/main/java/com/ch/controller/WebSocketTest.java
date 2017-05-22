@@ -97,11 +97,16 @@ public class WebSocketTest {
      * @param messageBean 接受消息bean
      */
     public void sendToUser(ReceiveMessageBean messageBean){
+        DBConnection dbConnection1= new DBConnection();
+        String sql1 ="select nickname from Userinfo where username = ?";
+        String nickname = dbConnection1.excuteQuery1(sql1 ,messageBean.getFromUser());
+        messageBean.setFromUserNickName(nickname);
         Message message = new Message();
         message.setMessageContent(messageBean.getMessage());
         message.setMessageFromuser(messageBean.getFromUser());
         message.setMessageTouser(messageBean.getToUser());
         message.setMessageTime(GetTime.getTimeStamp());
+        JSONObject jsonObject = JSONObject.fromObject(messageBean);
         if (webSocketTestMap.get(messageBean.getToUser())==null) {
             message.setMessageIsread(0);
         }
@@ -109,7 +114,7 @@ public class WebSocketTest {
             message.setMessageIsread(1);
             WebSocketTest web = (WebSocketTest)webSocketTestMap.get(messageBean.getToUser());
             try {
-                web.session.getBasicRemote().sendText(messageBean.getMessage());
+                web.session.getBasicRemote().sendText(jsonObject.toString());
             }catch (IOException e){
                 e.printStackTrace();
                 webSocketTestMap.remove(web);

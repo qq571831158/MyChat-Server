@@ -30,7 +30,28 @@ public class DBConnection {
         }
         return dbConn;
     }
-    public static ArrayList executeQuery(String sql, String [] paras){
+    public String excuteQuery1(String sql,String username){
+        try{
+            String nickname = null;
+            ct=getConnection();
+            ps=ct.prepareStatement(sql);
+            ps.setString(1,username);
+            rs=ps.executeQuery();
+            while (rs.next()){
+                nickname = rs.getString(1);
+            }
+            return nickname;
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        finally{
+            close(rs,ps,ct);
+        }
+    }
+    public  ArrayList executeQuery(String sql, String [] paras){
         try{
             ct=getConnection();
             ps=ct.prepareStatement(sql);

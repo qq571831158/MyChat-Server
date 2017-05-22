@@ -53,5 +53,13 @@ public class UserDAO {
         return query.list();
     }
 
+    @Transactional(readOnly = false)
+    public Object[] getUserLoginPic(String username){
+        String sql = "SELECT user_picture FROM Userinfo WHERE username = ?";
+        Query query = this.getSession().createSQLQuery(sql);
+        query.setParameter(0,username);
+        return query.list().toArray();
+    }
+
 
 }

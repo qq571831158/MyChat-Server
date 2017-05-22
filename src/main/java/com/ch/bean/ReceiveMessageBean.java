@@ -7,6 +7,16 @@ public class ReceiveMessageBean {
     private String fromUser;
     private String toUser;
     private String message;
+    private String fromUserNickName;
+
+    public String getFromUserNickName() {
+        return fromUserNickName;
+    }
+
+    public void setFromUserNickName(String fromUserNickName) {
+        this.fromUserNickName = fromUserNickName;
+    }
+
     public String getFromUser() {
         return fromUser;
     }
@@ -36,5 +46,6 @@ public class ReceiveMessageBean {
         this.fromUser = fromUser;
         this.message = message;
         this.toUser = toUser;
+//        this.fromUserNickName = fromUserNickName;
     }
 }

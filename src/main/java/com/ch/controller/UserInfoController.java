@@ -5,17 +5,18 @@ import com.ch.bean.OBeanBase;
 import com.ch.bean.UserLoginIBean;
 import com.ch.bean.UserloginOBean;
 import com.ch.model.Userinfo;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by apple on 2017/1/18.
@@ -53,6 +54,25 @@ public class UserInfoController {
             }
         } else {
             carrier.setInfo("E01", "账户不存在");
+        }
+        return carrier;
+    }
+
+    @RequestMapping(value = "/loginPic",method = RequestMethod.GET)
+    @ResponseBody
+    public OBeanBase getLoginPic(@RequestParam("username")String username){
+        System.out.println(username.getClass()+"         "+ username);
+        OBeanBase carrier = new OBeanBase();
+        String hql = "FROM Userinfo WHERE username = ?";
+        Object[] userPicture = dao.getUserLoginPic(username);
+        if (userPicture.length!=0){
+            Map<String,String> map = new HashMap<String, String>();
+            map.put("user_picture",userPicture[0].toString());
+            carrier.setInfo("S01","查询成功");
+            carrier.setContents(map);
+        }
+        else {
+            carrier.setInfo("E01","无此用户");
         }
         return carrier;
     }
